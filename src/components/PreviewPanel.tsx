@@ -42,17 +42,11 @@ ${javascript}
     `;
   };
 
-  // Update the iframe content
+  // Update the iframe content using srcdoc instead of direct document manipulation
   useEffect(() => {
     if (iframeRef.current) {
-      const iframe = iframeRef.current;
-      const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
-      
-      if (iframeDoc) {
-        iframeDoc.open();
-        iframeDoc.write(generateFullHtml());
-        iframeDoc.close();
-      }
+      // Using srcdoc attribute instead of accessing contentDocument directly
+      iframeRef.current.srcdoc = generateFullHtml();
     }
   }, [html, css, javascript, mode]);
 
@@ -132,6 +126,7 @@ ${javascript}
           title="Code Preview"
           className="w-full h-full"
           sandbox="allow-scripts"
+          srcDoc=""
         ></iframe>
       </div>
     </div>
