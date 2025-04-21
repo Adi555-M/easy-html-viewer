@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from 'react';
 import { EditorView, basicSetup } from 'codemirror';
 import { javascript } from '@codemirror/lang-javascript';
@@ -72,6 +71,20 @@ export default function CodeEditor({ language, value, onChange }: CodeEditorProp
       });
     }
   }, [value]);
+
+  // Paste event listener for global paste event initiated from PreviewPanel
+  useEffect(() => {
+    const handler = (event: CustomEvent) => {
+      if (typeof event.detail === "string" && event.detail.length) {
+        onChange(event.detail);
+      }
+    };
+    // Listen for editor-paste events
+    window.addEventListener("editor-paste", handler as EventListener);
+    return () => {
+      window.removeEventListener("editor-paste", handler as EventListener);
+    };
+  }, [onChange]);
 
   return <div className="editor-container" ref={editorRef}></div>;
 }

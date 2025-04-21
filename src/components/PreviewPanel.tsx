@@ -1,8 +1,8 @@
-
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Copy, Download, FileText } from 'lucide-react';
+import { Copy, Download, FileText, Paste } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
+import FullResultModal from "./FullResultModal";
 
 interface PreviewPanelProps {
   html: string;
@@ -14,13 +14,14 @@ interface PreviewPanelProps {
 export default function PreviewPanel({ html, css, javascript, mode }: PreviewPanelProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const { toast } = useToast();
+  const [modalOpen, setModalOpen] = useState(false);
 
   // Generate the full HTML document
   const generateFullHtml = () => {
-    if (mode === 'html-only') {
+    if (mode === "html-only") {
       return html;
     }
-    
+
     return `
 <!DOCTYPE html>
 <html lang="en">
@@ -45,7 +46,6 @@ ${javascript}
   // Update the iframe content using srcdoc instead of direct document manipulation
   useEffect(() => {
     if (iframeRef.current) {
-      // Using srcdoc attribute instead of accessing contentDocument directly
       iframeRef.current.srcdoc = generateFullHtml();
     }
   }, [html, css, javascript, mode]);
@@ -55,80 +55,117 @@ ${javascript}
     try {
       await navigator.clipboard.writeText(generateFullHtml());
       toast({
-        title: "Code copied to clipboard",
-        description: "You can now paste it anywhere",
+        title: "Code copied!",
+        description: "Your code is now in your clipboard.",
       });
     } catch (err) {
-      console.error("Failed to copy: ", err);
       toast({
-        title: "Failed to copy",
-        description: "Please try again",
+        title: "Copy failed",
+        description: "Try again.",
         variant: "destructive",
       });
     }
   };
 
-  // Download as HTML file
+  // Paste from clipboard
+  const handlePaste = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      // Emit a custom event so editors can handle paste
+      window.dispatchEvent(new CustomEvent("editor-paste", { detail: text }));
+      toast({
+        title: "Paste successful!",
+        description: "Pasted code into the editor.",
+      });
+    } catch {
+      toast({
+        title: "Paste failed",
+        description: "Clipboard access denied.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Download as PDF (code, not result)
+  const downloadPdf = async () => {
+    // Dynamically import jsPDF for PDF generation
+    const { jsPDF } = await import("jspdf");
+    const doc = new jsPDF();
+    const code = generateFullHtml();
+    // Split into lines and wrap
+    const lines = doc.splitTextToSize(code, 180);
+    doc.setFontSize(10);
+    doc.text(lines, 10, 10);
+    doc.save("code.pdf");
+    toast({
+      title: "PDF downloaded!",
+      description: "Your code was saved as code.pdf.",
+    });
+  };
+
+  // Download as HTML file (unchanged)
   const downloadHtml = () => {
-    const blob = new Blob([generateFullHtml()], { type: 'text/html' });
+    const blob = new Blob([generateFullHtml()], { type: "text/html" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = 'code.html';
+    a.download = "code.html";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    
+
     toast({
       title: "HTML file downloaded",
       description: "Code saved as code.html",
     });
   };
 
-  // Download as PDF
-  const downloadPdf = () => {
-    // Using html2pdf or similar would be implemented here
-    // For now, we'll just show a toast message
-    toast({
-      title: "PDF Export",
-      description: "This feature will be implemented soon!",
-    });
-  };
-
   return (
     <div className="flex flex-col h-full">
-      <div className="bg-secondary p-2 rounded-t-lg flex justify-between items-center">
+      <div className="bg-secondary p-2 rounded-t-lg flex flex-col sm:flex-row justify-between gap-2 items-center">
         <h3 className="font-medium">Preview</h3>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2 justify-center">
           <Button variant="outline" size="sm" onClick={copyCode}>
-            <Copy className="h-4 w-4 mr-2" />
-            {mode === 'html-only' ? 'Copy Code' : 'Copy All Code'}
+            <Copy className="h-4 w-4 mr-1" />
+            Copy Code
           </Button>
-          
+          <Button variant="outline" size="sm" onClick={handlePaste}>
+            <Paste className="h-4 w-4 mr-1" />
+            Paste
+          </Button>
           <Button variant="outline" size="sm" onClick={downloadPdf}>
-            <Download className="h-4 w-4 mr-2" />
-            Download PDF
+            <Download className="h-4 w-4 mr-1" />
+            Download PDF (Code)
           </Button>
-          
-          {mode === 'full' && (
+          {mode === "full" && (
             <Button variant="outline" size="sm" onClick={downloadHtml}>
-              <FileText className="h-4 w-4 mr-2" />
+              <FileText className="h-4 w-4 mr-1" />
               Download HTML
             </Button>
           )}
+          <Button variant="default" size="sm" onClick={() => setModalOpen(true)}>
+            Show Full Result
+          </Button>
         </div>
       </div>
-      
       <div className="flex-grow border border-border rounded-b-lg bg-white overflow-hidden">
-        <iframe 
+        <iframe
           ref={iframeRef}
           title="Code Preview"
-          className="w-full h-full"
+          className="w-full h-full min-h-[300px]"
           sandbox="allow-scripts"
           srcDoc=""
         ></iframe>
       </div>
+      <FullResultModal
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+        html={html}
+        css={css}
+        javascript={javascript}
+        mode={mode}
+      />
     </div>
   );
 }
