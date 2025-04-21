@@ -1,6 +1,8 @@
+
 import { useRef, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Copy, Download, FileText, Paste } from 'lucide-react';
+import { Copy, Download, FileText } from 'lucide-react';
+import { ClipboardPaste } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import FullResultModal from "./FullResultModal";
 
@@ -88,14 +90,25 @@ ${javascript}
 
   // Download as PDF (code, not result)
   const downloadPdf = async () => {
-    // Dynamically import jsPDF for PDF generation
     const { jsPDF } = await import("jspdf");
-    const doc = new jsPDF();
+    const doc = new jsPDF({
+      unit: "pt",
+      format: "a4",
+    });
     const code = generateFullHtml();
-    // Split into lines and wrap
-    const lines = doc.splitTextToSize(code, 180);
+    const margin = 40;
+    const pageWidth = doc.internal.pageSize.getWidth() - margin * 2;
     doc.setFontSize(10);
-    doc.text(lines, 10, 10);
+    const lines = doc.splitTextToSize(code, pageWidth);
+    let y = margin;
+    lines.forEach((line, i) => {
+      if (y > doc.internal.pageSize.getHeight() - margin) {
+        doc.addPage();
+        y = margin;
+      }
+      doc.text(line, margin, y);
+      y += 12;
+    });
     doc.save("code.pdf");
     toast({
       title: "PDF downloaded!",
@@ -103,7 +116,7 @@ ${javascript}
     });
   };
 
-  // Download as HTML file (unchanged)
+  // Download as HTML file
   const downloadHtml = () => {
     const blob = new Blob([generateFullHtml()], { type: "text/html" });
     const url = URL.createObjectURL(blob);
@@ -122,7 +135,7 @@ ${javascript}
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full max-h-full">
       <div className="bg-secondary p-2 rounded-t-lg flex flex-col sm:flex-row justify-between gap-2 items-center">
         <h3 className="font-medium">Preview</h3>
         <div className="flex flex-wrap gap-2 justify-center">
@@ -131,7 +144,7 @@ ${javascript}
             Copy Code
           </Button>
           <Button variant="outline" size="sm" onClick={handlePaste}>
-            <Paste className="h-4 w-4 mr-1" />
+            <ClipboardPaste className="h-4 w-4 mr-1" />
             Paste
           </Button>
           <Button variant="outline" size="sm" onClick={downloadPdf}>
@@ -149,7 +162,7 @@ ${javascript}
           </Button>
         </div>
       </div>
-      <div className="flex-grow border border-border rounded-b-lg bg-white overflow-hidden">
+      <div className="flex-grow border border-border rounded-b-lg bg-white overflow-hidden min-h-[300px]">
         <iframe
           ref={iframeRef}
           title="Code Preview"
@@ -169,3 +182,4 @@ ${javascript}
     </div>
   );
 }
+
