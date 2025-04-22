@@ -15,7 +15,6 @@ export default function PreviewPanel({ html, css, javascript, mode }: PreviewPan
   const { toast } = useToast();
   const [modalOpen, setModalOpen] = useState(false);
 
-  // Generate the full HTML document
   const generateFullHtml = () => {
     if (mode === "html-only") {
       return html;
@@ -41,7 +40,6 @@ ${javascript}
     `;
   };
 
-  // Update the iframe content using srcdoc
   useEffect(() => {
     if (iframeRef.current) {
       iframeRef.current.srcdoc = generateFullHtml();
@@ -49,8 +47,8 @@ ${javascript}
   }, [html, css, javascript, mode]);
 
   return (
-    <div className="flex flex-col h-full max-h-full">
-      <div className="bg-secondary p-2 rounded-t-lg flex flex-col sm:flex-row justify-between gap-2 items-center">
+    <div className="flex flex-col h-full">
+      <div className="bg-secondary p-4 rounded-t-lg flex flex-col sm:flex-row justify-between gap-2 items-center sticky top-0 z-10">
         <h3 className="font-medium">Preview</h3>
         <div className="flex flex-wrap gap-2 justify-center">
           <Button variant="default" size="sm" onClick={() => setModalOpen(true)}>
@@ -58,31 +56,19 @@ ${javascript}
           </Button>
         </div>
       </div>
-      <div
-        className="
-          flex-grow
-          border border-border
-          rounded-b-lg
-          bg-white
-          overflow-auto
-          min-h-[320px]
-          max-h-[65vh]
-          transition-all
-          "
-        style={{height: "100%"}}
-      >
+      <div className="flex-grow border border-border rounded-b-lg bg-white overflow-hidden relative">
         <iframe
           ref={iframeRef}
           title="Code Preview"
-          className="w-full min-h-[300px] lg:min-h-[420px]"
+          className="w-full h-full"
           style={{
-            minHeight: "300px",
-            height: "65vh",
+            minHeight: "420px",
+            height: "100%",
             border: "none",
             background: "white",
             borderRadius: "0 0 0.75rem 0.75rem"
           }}
-          sandbox="allow-scripts"
+          sandbox="allow-scripts allow-forms"
           srcDoc=""
         ></iframe>
       </div>
