@@ -1,4 +1,3 @@
-
 import { useRef, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import FullResultModal from "./FullResultModal";
@@ -69,7 +68,7 @@ ${html}
   }, [html, css, javascript, mode]);
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col min-h-0 h-full">
       <div className="bg-[#f8f9fc] p-4 rounded-t-lg flex flex-col sm:flex-row justify-between gap-2 items-center sticky top-0 z-10 border-b border-[#e2e8f0]">
         <h3 className="font-medium text-[#1a1f2c]">Preview</h3>
         <div className="flex flex-wrap gap-2 justify-center">
@@ -83,14 +82,12 @@ ${html}
           </Button>
         </div>
       </div>
-      <div className="flex-grow border border-[#e2e8f0] rounded-b-lg bg-white overflow-hidden relative">
+      <div className="flex-1 border border-[#e2e8f0] rounded-b-lg bg-white overflow-auto">
         <iframe
           ref={iframeRef}
           title="Code Preview"
-          className="w-full h-full"
+          className="w-full h-auto min-h-[200px]"
           style={{
-            minHeight: "420px",
-            height: "100%",
             border: "none",
             background: "white",
             borderRadius: "0 0 0.75rem 0.75rem"

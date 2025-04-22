@@ -68,7 +68,7 @@ ${html}
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[90vw] w-[1200px] h-[90vh] p-0 bg-[#f8f9fc] rounded-xl overflow-hidden">
+      <DialogContent className="max-w-[95vw] w-[1200px] max-h-[95vh] p-0 bg-[#f8f9fc] rounded-xl overflow-hidden">
         <DialogHeader className="p-4 border-b border-[#e2e8f0] flex flex-row justify-between items-center bg-white sticky top-0 z-10">
           <DialogTitle className="text-[#1a1f2c]">Full Result</DialogTitle>
           <div className="flex items-center gap-2">
@@ -77,10 +77,11 @@ ${html}
             </DialogClose>
           </div>
         </DialogHeader>
-        <div className="w-full h-[calc(90vh-4rem)] bg-white relative">
+        <div className="w-full max-h-[calc(95vh-4rem)] bg-white relative overflow-auto">
           <iframe
             srcDoc={generateFullHtml()}
-            className="w-full h-full border-none"
+            className="w-full h-full min-h-[300px]"
+            style={{ border: "none" }}
             sandbox="allow-scripts allow-forms allow-popups allow-modals allow-same-origin"
             title="Full Result"
           ></iframe>
