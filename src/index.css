@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -88,6 +87,20 @@
   .editor-container {
     min-height: 200px;
     height: 100%;
+  }
+
+  @media (max-width: 640px) {
+    .container {
+      padding: 0.5rem;
+    }
+
+    .cm-editor {
+      min-height: 150px;
+    }
+
+    .editor-container {
+      min-height: 150px;
+    }
   }
 
   @keyframes fade-in {

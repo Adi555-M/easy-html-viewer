@@ -215,6 +215,10 @@ export default function HTMLRunner() {
           </div>
         </div>
       </Tabs>
+
+      <div className="mt-8 text-center text-gray-500 text-sm">
+        Created by Mr. Marb
+      </div>
     </div>
   );
 }
