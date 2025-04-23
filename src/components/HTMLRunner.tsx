@@ -104,19 +104,21 @@ export default function HTMLRunner() {
                 <div className="bg-secondary p-2 rounded-t-lg">
                   <h3 className="font-medium">HTML</h3>
                 </div>
-                <div className="flex flex-wrap gap-2 items-center px-2 py-2 bg-muted border-b border-border">
-                  <Button variant="outline" size="sm" onClick={() => handleSectionCopy('html')}>
-                    <Copy className="h-4 w-4 mr-1" />
-                    Copy
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => handleSectionPaste('html')}>
-                    <ClipboardPaste className="h-4 w-4 mr-1" />
-                    Paste
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => handleSectionDownload('html')}>
-                    <Download className="h-4 w-4 mr-1" />
-                    Download PDF
-                  </Button>
+                <div className="flex flex-col gap-2 items-start px-2 py-2 bg-muted border-b border-border">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 w-full">
+                    <Button variant="outline" size="sm" onClick={() => handleSectionCopy('html')}>
+                      <Copy className="h-4 w-4 mr-1" />
+                      Copy
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => handleSectionPaste('html')}>
+                      <ClipboardPaste className="h-4 w-4 mr-1" />
+                      Paste
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => handleSectionDownload('html')}>
+                      <Download className="h-4 w-4 mr-1" />
+                      Download PDF
+                    </Button>
+                  </div>
                 </div>
                 <div className="border border-border rounded-b-lg overflow-hidden min-h-[200px] max-h-[50vh]">
                   <CodeEditor
@@ -133,19 +135,21 @@ export default function HTMLRunner() {
                 <div className="bg-secondary p-2 rounded-t-lg">
                   <h3 className="font-medium">HTML</h3>
                 </div>
-                <div className="flex flex-wrap gap-2 items-center px-2 py-2 bg-muted border-b border-border">
-                  <Button variant="outline" size="sm" onClick={() => handleSectionCopy('html')}>
-                    <Copy className="h-4 w-4 mr-1" />
-                    Copy
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => handleSectionPaste('html')}>
-                    <ClipboardPaste className="h-4 w-4 mr-1" />
-                    Paste
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => handleSectionDownload('html')}>
-                    <Download className="h-4 w-4 mr-1" />
-                    Download PDF
-                  </Button>
+                <div className="flex flex-col gap-2 items-start px-2 py-2 bg-muted border-b border-border">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 w-full">
+                    <Button variant="outline" size="sm" onClick={() => handleSectionCopy('html')}>
+                      <Copy className="h-4 w-4 mr-1" />
+                      Copy
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => handleSectionPaste('html')}>
+                      <ClipboardPaste className="h-4 w-4 mr-1" />
+                      Paste
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => handleSectionDownload('html')}>
+                      <Download className="h-4 w-4 mr-1" />
+                      Download PDF
+                    </Button>
+                  </div>
                 </div>
                 <div className="border border-border rounded-b-lg overflow-hidden min-h-[200px] max-h-[27vh]">
                   <CodeEditor language="html" value={htmlCode} onChange={setHtmlCode} />
@@ -156,19 +160,21 @@ export default function HTMLRunner() {
                 <div className="bg-secondary p-2 rounded-t-lg">
                   <h3 className="font-medium">CSS</h3>
                 </div>
-                <div className="flex flex-wrap gap-2 items-center px-2 py-2 bg-muted border-b border-border">
-                  <Button variant="outline" size="sm" onClick={() => handleSectionCopy('css')}>
-                    <Copy className="h-4 w-4 mr-1" />
-                    Copy
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => handleSectionPaste('css')}>
-                    <ClipboardPaste className="h-4 w-4 mr-1" />
-                    Paste
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => handleSectionDownload('css')}>
-                    <Download className="h-4 w-4 mr-1" />
-                    Download PDF
-                  </Button>
+                <div className="flex flex-col gap-2 items-start px-2 py-2 bg-muted border-b border-border">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 w-full">
+                    <Button variant="outline" size="sm" onClick={() => handleSectionCopy('css')}>
+                      <Copy className="h-4 w-4 mr-1" />
+                      Copy
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => handleSectionPaste('css')}>
+                      <ClipboardPaste className="h-4 w-4 mr-1" />
+                      Paste
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => handleSectionDownload('css')}>
+                      <Download className="h-4 w-4 mr-1" />
+                      Download PDF
+                    </Button>
+                  </div>
                 </div>
                 <div className="border border-border rounded-b-lg overflow-hidden min-h-[130px] max-h-[27vh]">
                   <CodeEditor language="css" value={cssCode} onChange={setCssCode} />
@@ -179,19 +185,21 @@ export default function HTMLRunner() {
                 <div className="bg-secondary p-2 rounded-t-lg">
                   <h3 className="font-medium">JavaScript</h3>
                 </div>
-                <div className="flex flex-wrap gap-2 items-center px-2 py-2 bg-muted border-b border-border">
-                  <Button variant="outline" size="sm" onClick={() => handleSectionCopy('js')}>
-                    <Copy className="h-4 w-4 mr-1" />
-                    Copy
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => handleSectionPaste('js')}>
-                    <ClipboardPaste className="h-4 w-4 mr-1" />
-                    Paste
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => handleSectionDownload('js')}>
-                    <Download className="h-4 w-4 mr-1" />
-                    Download PDF
-                  </Button>
+                <div className="flex flex-col gap-2 items-start px-2 py-2 bg-muted border-b border-border">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 w-full">
+                    <Button variant="outline" size="sm" onClick={() => handleSectionCopy('js')}>
+                      <Copy className="h-4 w-4 mr-1" />
+                      Copy
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => handleSectionPaste('js')}>
+                      <ClipboardPaste className="h-4 w-4 mr-1" />
+                      Paste
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => handleSectionDownload('js')}>
+                      <Download className="h-4 w-4 mr-1" />
+                      Download PDF
+                    </Button>
+                  </div>
                 </div>
                 <div className="border border-border rounded-b-lg overflow-hidden min-h-[130px] max-h-[27vh]">
                   <CodeEditor language="javascript" value={jsCode} onChange={setJsCode} />
@@ -206,7 +214,7 @@ export default function HTMLRunner() {
             </div>
           </div>
 
-          <div className="min-h-[320px] h-full flex flex-col">
+          <div className="min-h-[400px] h-full flex flex-col">
             <PreviewPanel
               html={previewHtml}
               css={previewCss}

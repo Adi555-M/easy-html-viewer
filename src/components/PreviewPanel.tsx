@@ -83,15 +83,16 @@ ${html}
           </Button>
         </div>
       </div>
-      <div className="flex-1 border border-[#e2e8f0] rounded-b-lg bg-white overflow-auto">
+      <div className="flex-1 border border-[#e2e8f0] rounded-b-lg bg-white overflow-auto flex flex-col">
         <iframe
           ref={iframeRef}
           title="Code Preview"
-          className="w-full h-full min-h-[350px]"
+          className="w-full h-full min-h-[400px]" /* Increased minimum height */
           style={{
             border: "none",
             background: "white",
-            borderRadius: "0 0 0.75rem 0.75rem"
+            borderRadius: "0 0 0.75rem 0.75rem",
+            flexGrow: 1
           }}
           sandbox="allow-scripts allow-forms allow-popups allow-modals allow-same-origin"
           srcDoc=""

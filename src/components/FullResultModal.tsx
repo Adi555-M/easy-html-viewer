@@ -85,7 +85,7 @@ ${html}
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[100vw] w-[100vw] h-[100vh] max-h-[100vh] p-0 bg-[#f8f9fc] rounded-none overflow-hidden m-0">
         <DialogHeader className="p-4 border-b border-[#e2e8f0] flex flex-row justify-between items-center bg-white sticky top-0 z-10">
-          <DialogTitle className="text-[#1a1f2c]">Full Preview {isMobile ? "(Mobile)" : "(Desktop)"}</DialogTitle>
+          <DialogTitle className="text-[#1a1f2c]">Full Preview {isMobile ? "(Mobile View)" : "(Desktop View)"}</DialogTitle>
           <div className="flex items-center gap-2">
             <DialogClose asChild>
               <Button variant="ghost" className="text-[#1a1f2c] hover:bg-[#f8f9fc]">Close</Button>
@@ -98,7 +98,7 @@ ${html}
             className="w-full h-full"
             style={{ 
               border: "none",
-              minHeight: isMobile ? "100%" : "600px"
+              minHeight: "100%"
             }}
             sandbox="allow-scripts allow-forms allow-popups allow-modals allow-same-origin"
             title="Full Result"

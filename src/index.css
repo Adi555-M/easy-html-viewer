@@ -106,6 +106,20 @@
     .flex.flex-wrap {
       justify-content: flex-start;
     }
+    
+    /* Improve button layout on mobile */
+    .grid-cols-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  /* Ensure buttons stay within their container */
+  .grid-cols-2 button, .grid-cols-3 button {
+    width: 100%;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   @keyframes fade-in {
