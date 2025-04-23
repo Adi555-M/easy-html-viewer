@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -82,7 +81,7 @@ export default function HTMLRunner() {
   };
 
   return (
-    <div className="container py-4">
+    <div className="container py-4 relative">
       <h1 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6 text-center">HTML Runner Tool</h1>
 
       <Tabs
@@ -225,8 +224,20 @@ export default function HTMLRunner() {
         </div>
       </Tabs>
 
-      <div className="mt-8 text-center text-gray-500 text-sm">
-        Created by Mr. Marb
+      <div className="mt-8 text-center">
+        <div className="bg-soft-purple-100 rounded-lg py-3 px-4 inline-block mx-auto">
+          <p className="text-sm text-secondary-purple flex items-center justify-center gap-2">
+            <span>Crafted with ❤️ by</span>
+            <a 
+              href="https://github.com/mr-marb" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="font-semibold text-vivid-purple hover:underline"
+            >
+              Mr. Marb
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   );
