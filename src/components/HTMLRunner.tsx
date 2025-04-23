@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import CodeEditor from './CodeEditor';
 import PreviewPanel from './PreviewPanel';
-import { Copy, Download, ClipboardPaste } from 'lucide-react';
+import { Copy, Download, ClipboardPaste, Minus } from 'lucide-react';
 import { toast } from "sonner";
 
 export default function HTMLRunner() {
@@ -227,7 +227,9 @@ export default function HTMLRunner() {
       <div className="mt-8 text-center">
         <div className="bg-soft-purple-100 rounded-lg py-3 px-4 inline-block mx-auto">
           <p className="text-sm text-secondary-purple flex items-center justify-center gap-2">
-            <span>Crafted with ❤️ by</span>
+            <span>Made with</span>
+            <Minus className="h-4 w-4 text-vivid-purple" />
+            <span>by</span>
             <a 
               href="https://github.com/mr-marb" 
               target="_blank" 
