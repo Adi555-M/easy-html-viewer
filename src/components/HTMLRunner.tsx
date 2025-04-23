@@ -5,6 +5,7 @@ import CodeEditor from './CodeEditor';
 import PreviewPanel from './PreviewPanel';
 import { Copy, Download, ClipboardPaste, Minus } from 'lucide-react';
 import { toast } from "sonner";
+import { Brain } from 'lucide-react';
 
 export default function HTMLRunner() {
   const [htmlCode, setHtmlCode] = useState('<h1>Hello World!</h1>\n<p>Start editing to see your changes</p>');
@@ -228,7 +229,7 @@ export default function HTMLRunner() {
         <div className="bg-soft-purple-100 rounded-lg py-3 px-4 inline-block mx-auto">
           <p className="text-sm text-secondary-purple flex items-center justify-center gap-2">
             <span>Made with</span>
-            <Minus className="h-4 w-4 text-vivid-purple" />
+            <Brain className="h-4 w-4 text-vivid-purple" />
             <span>by</span>
             <a 
               href="https://github.com/mr-marb" 
