@@ -1,3 +1,4 @@
+
 import { useRef, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import FullResultModal from "./FullResultModal";
@@ -86,7 +87,7 @@ ${html}
         <iframe
           ref={iframeRef}
           title="Code Preview"
-          className="w-full h-auto min-h-[200px]"
+          className="w-full h-full min-h-[350px]"
           style={{
             border: "none",
             background: "white",

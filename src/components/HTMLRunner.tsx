@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -103,7 +104,7 @@ export default function HTMLRunner() {
                 <div className="bg-secondary p-2 rounded-t-lg">
                   <h3 className="font-medium">HTML</h3>
                 </div>
-                <div className="flex gap-2 items-center px-2 py-2 bg-muted border-b border-border">
+                <div className="flex flex-wrap gap-2 items-center px-2 py-2 bg-muted border-b border-border">
                   <Button variant="outline" size="sm" onClick={() => handleSectionCopy('html')}>
                     <Copy className="h-4 w-4 mr-1" />
                     Copy
@@ -132,7 +133,7 @@ export default function HTMLRunner() {
                 <div className="bg-secondary p-2 rounded-t-lg">
                   <h3 className="font-medium">HTML</h3>
                 </div>
-                <div className="flex gap-2 items-center px-2 py-2 bg-muted border-b border-border">
+                <div className="flex flex-wrap gap-2 items-center px-2 py-2 bg-muted border-b border-border">
                   <Button variant="outline" size="sm" onClick={() => handleSectionCopy('html')}>
                     <Copy className="h-4 w-4 mr-1" />
                     Copy
@@ -155,7 +156,7 @@ export default function HTMLRunner() {
                 <div className="bg-secondary p-2 rounded-t-lg">
                   <h3 className="font-medium">CSS</h3>
                 </div>
-                <div className="flex gap-2 items-center px-2 py-2 bg-muted border-b border-border">
+                <div className="flex flex-wrap gap-2 items-center px-2 py-2 bg-muted border-b border-border">
                   <Button variant="outline" size="sm" onClick={() => handleSectionCopy('css')}>
                     <Copy className="h-4 w-4 mr-1" />
                     Copy
@@ -178,7 +179,7 @@ export default function HTMLRunner() {
                 <div className="bg-secondary p-2 rounded-t-lg">
                   <h3 className="font-medium">JavaScript</h3>
                 </div>
-                <div className="flex gap-2 items-center px-2 py-2 bg-muted border-b border-border">
+                <div className="flex flex-wrap gap-2 items-center px-2 py-2 bg-muted border-b border-border">
                   <Button variant="outline" size="sm" onClick={() => handleSectionCopy('js')}>
                     <Copy className="h-4 w-4 mr-1" />
                     Copy
