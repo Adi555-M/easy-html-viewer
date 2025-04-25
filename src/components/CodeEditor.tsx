@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, useState } from 'react';
 import { EditorView, basicSetup } from 'codemirror';
 import { javascript } from '@codemirror/lang-javascript';
@@ -18,12 +19,10 @@ export default function CodeEditor({ language, value, onChange }: CodeEditorProp
   useEffect(() => {
     if (!editorRef.current) return;
 
-    // Clean up any existing editor
     if (editorView) {
       editorView.destroy();
     }
 
-    // Set up the language extension based on the language prop
     let languageExtension;
     switch (language) {
       case 'html':
@@ -39,13 +38,35 @@ export default function CodeEditor({ language, value, onChange }: CodeEditorProp
         languageExtension = html();
     }
 
-    // Create a new editor view
     const view = new EditorView({
       state: EditorState.create({
         doc: value,
         extensions: [
           basicSetup,
           languageExtension,
+          EditorView.theme({
+            "&": {
+              height: "100%",
+              maxHeight: "100%",
+              fontSize: "14px",
+              backgroundColor: "transparent"
+            },
+            ".cm-scroller": {
+              overflow: "auto",
+              fontFamily: "monospace"
+            },
+            ".cm-content": {
+              padding: "10px",
+              minHeight: "100%"
+            },
+            ".cm-line": {
+              padding: "0 4px",
+              lineHeight: "1.6"
+            },
+            "&.cm-focused": {
+              outline: "none"
+            }
+          }),
           EditorView.updateListener.of((update) => {
             if (update.docChanged) {
               onChange(update.state.doc.toString());
@@ -61,9 +82,8 @@ export default function CodeEditor({ language, value, onChange }: CodeEditorProp
     return () => {
       view.destroy();
     };
-  }, [language]); // Re-initialize when language changes
+  }, [language]);
 
-  // Update editor content when value prop changes
   useEffect(() => {
     if (editorView && value !== editorView.state.doc.toString()) {
       editorView.dispatch({
@@ -72,14 +92,12 @@ export default function CodeEditor({ language, value, onChange }: CodeEditorProp
     }
   }, [value]);
 
-  // Paste event listener for global paste event initiated from PreviewPanel
   useEffect(() => {
     const handler = (event: CustomEvent) => {
       if (typeof event.detail === "string" && event.detail.length) {
         onChange(event.detail);
       }
     };
-    // Listen for editor-paste events
     window.addEventListener("editor-paste", handler as EventListener);
     return () => {
       window.removeEventListener("editor-paste", handler as EventListener);
