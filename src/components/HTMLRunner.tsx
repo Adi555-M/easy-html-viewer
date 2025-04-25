@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import CodeEditor from './CodeEditor';
 import PreviewPanel from './PreviewPanel';
-import { Copy, Download, ClipboardPaste, Minus } from 'lucide-react';
+import { Copy, Download, ClipboardPaste, Edit } from 'lucide-react';
 import { toast } from "sonner";
 import { Brain } from 'lucide-react';
 
@@ -49,30 +49,39 @@ export default function HTMLRunner() {
     }
   };
 
-  const handleSectionDownload = async (section: 'html' | 'css' | 'js') => {
-    const { jsPDF } = await import("jspdf");
+  const handleSectionDownload = (section: 'html' | 'css' | 'js') => {
     const content = {
       html: htmlCode,
       css: cssCode,
       js: jsCode
     }[section];
     
-    const doc = new jsPDF({ unit: "pt", format: "a4" });
-    const margin = 40;
-    const pageWidth = doc.internal.pageSize.getWidth() - margin * 2;
-    doc.setFontSize(10);
-    const lines = doc.splitTextToSize(content, pageWidth);
-    let y = margin;
-    lines.forEach(line => {
-      if (y > doc.internal.pageSize.getHeight() - margin) {
-        doc.addPage();
-        y = margin;
-      }
-      doc.text(line, margin, y);
-      y += 12;
-    });
-    doc.save(`code-${section}.pdf`);
-    toast.success(`Downloaded ${section.toUpperCase()} code as PDF`);
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `code-${section}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+    toast.success(`Downloaded ${section.toUpperCase()} code as TXT`);
+  };
+
+  const handleEdit = (section: 'html' | 'css' | 'js') => {
+    const content = {
+      html: htmlCode,
+      css: cssCode,
+      js: jsCode
+    }[section];
+
+    const dispatchPasteEvent = (text: string) => {
+      const event = new CustomEvent('editor-paste', { detail: text });
+      window.dispatchEvent(event);
+    };
+
+    dispatchPasteEvent(content);
+    toast.success(`Code opened in editor`);
   };
 
   const runCode = () => {
@@ -105,7 +114,7 @@ export default function HTMLRunner() {
                   <h3 className="font-medium">HTML</h3>
                 </div>
                 <div className="flex flex-col gap-2 items-start px-2 py-2 bg-muted border-b border-border">
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 w-full">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full">
                     <Button variant="outline" size="sm" onClick={() => handleSectionCopy('html')}>
                       <Copy className="h-4 w-4 mr-1" />
                       Copy
@@ -116,7 +125,11 @@ export default function HTMLRunner() {
                     </Button>
                     <Button variant="outline" size="sm" onClick={() => handleSectionDownload('html')}>
                       <Download className="h-4 w-4 mr-1" />
-                      Download PDF
+                      Download
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => handleEdit('html')}>
+                      <Edit className="h-4 w-4 mr-1" />
+                      Edit
                     </Button>
                   </div>
                 </div>
@@ -136,7 +149,7 @@ export default function HTMLRunner() {
                   <h3 className="font-medium">HTML</h3>
                 </div>
                 <div className="flex flex-col gap-2 items-start px-2 py-2 bg-muted border-b border-border">
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 w-full">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full">
                     <Button variant="outline" size="sm" onClick={() => handleSectionCopy('html')}>
                       <Copy className="h-4 w-4 mr-1" />
                       Copy
@@ -147,7 +160,11 @@ export default function HTMLRunner() {
                     </Button>
                     <Button variant="outline" size="sm" onClick={() => handleSectionDownload('html')}>
                       <Download className="h-4 w-4 mr-1" />
-                      Download PDF
+                      Download
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => handleEdit('html')}>
+                      <Edit className="h-4 w-4 mr-1" />
+                      Edit
                     </Button>
                   </div>
                 </div>
@@ -161,7 +178,7 @@ export default function HTMLRunner() {
                   <h3 className="font-medium">CSS</h3>
                 </div>
                 <div className="flex flex-col gap-2 items-start px-2 py-2 bg-muted border-b border-border">
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 w-full">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full">
                     <Button variant="outline" size="sm" onClick={() => handleSectionCopy('css')}>
                       <Copy className="h-4 w-4 mr-1" />
                       Copy
@@ -172,7 +189,11 @@ export default function HTMLRunner() {
                     </Button>
                     <Button variant="outline" size="sm" onClick={() => handleSectionDownload('css')}>
                       <Download className="h-4 w-4 mr-1" />
-                      Download PDF
+                      Download
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => handleEdit('css')}>
+                      <Edit className="h-4 w-4 mr-1" />
+                      Edit
                     </Button>
                   </div>
                 </div>
@@ -186,7 +207,7 @@ export default function HTMLRunner() {
                   <h3 className="font-medium">JavaScript</h3>
                 </div>
                 <div className="flex flex-col gap-2 items-start px-2 py-2 bg-muted border-b border-border">
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 w-full">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full">
                     <Button variant="outline" size="sm" onClick={() => handleSectionCopy('js')}>
                       <Copy className="h-4 w-4 mr-1" />
                       Copy
@@ -197,7 +218,11 @@ export default function HTMLRunner() {
                     </Button>
                     <Button variant="outline" size="sm" onClick={() => handleSectionDownload('js')}>
                       <Download className="h-4 w-4 mr-1" />
-                      Download PDF
+                      Download
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => handleEdit('js')}>
+                      <Edit className="h-4 w-4 mr-1" />
+                      Edit
                     </Button>
                   </div>
                 </div>
