@@ -84,17 +84,39 @@
   .cm-scroller {
     overflow: auto !important;
     padding: 0.5rem;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(155, 155, 155, 0.5) transparent;
   }
 
   .cm-content {
     white-space: pre-wrap;
     word-break: break-word;
+    caret-color: hsl(var(--primary));
   }
 
   .editor-container {
     min-height: 200px;
     height: 100%;
     position: relative;
+    cursor: text;
+  }
+  
+  .cm-scroller::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  .cm-scroller::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .cm-scroller::-webkit-scrollbar-thumb {
+    background: rgba(155, 155, 155, 0.5);
+    border-radius: 4px;
+  }
+  
+  .cm-scroller::-webkit-scrollbar-thumb:hover {
+    background: rgba(155, 155, 155, 0.7);
   }
 
   @media (max-width: 640px) {

@@ -53,11 +53,15 @@ export default function CodeEditor({ language, value, onChange }: CodeEditorProp
             },
             ".cm-scroller": {
               overflow: "auto",
-              fontFamily: "monospace"
+              fontFamily: "monospace",
+              padding: "0.5rem",
+              scrollbarWidth: "thin", // For Firefox
+              scrollbarColor: "rgba(155, 155, 155, 0.5) transparent" // For Firefox
             },
             ".cm-content": {
               padding: "10px",
-              minHeight: "100%"
+              minHeight: "100%",
+              caretColor: "hsl(var(--primary))"
             },
             ".cm-line": {
               padding: "0 4px",
@@ -65,6 +69,18 @@ export default function CodeEditor({ language, value, onChange }: CodeEditorProp
             },
             "&.cm-focused": {
               outline: "none"
+            },
+            // Improved scrollbar styling for webkit browsers
+            "&::-webkit-scrollbar, .cm-scroller::-webkit-scrollbar": {
+              width: "8px",
+              height: "8px"
+            },
+            "&::-webkit-scrollbar-track, .cm-scroller::-webkit-scrollbar-track": {
+              background: "transparent"
+            },
+            "&::-webkit-scrollbar-thumb, .cm-scroller::-webkit-scrollbar-thumb": {
+              background: "rgba(155, 155, 155, 0.5)",
+              borderRadius: "4px"
             }
           }),
           EditorView.updateListener.of((update) => {
@@ -104,5 +120,7 @@ export default function CodeEditor({ language, value, onChange }: CodeEditorProp
     };
   }, [onChange]);
 
-  return <div className="editor-container" ref={editorRef}></div>;
+  return (
+    <div className="editor-container h-full" ref={editorRef}></div>
+  );
 }
