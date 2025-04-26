@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
 import CodeEditor from './CodeEditor';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save, ClipboardPaste } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface FullScreenEditorProps {
@@ -45,6 +45,22 @@ export default function FullScreenEditor({
     toast.success(`${language.toUpperCase()} code updated`);
     onOpenChange(false);
   };
+  
+  const handlePaste = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (text) {
+        setEditedCode(text);
+        const customEvent = new CustomEvent('editor-paste', { detail: text });
+        window.dispatchEvent(customEvent);
+        toast.success('Code pasted from clipboard');
+      } else {
+        toast.error('Clipboard is empty or access denied');
+      }
+    } catch (err) {
+      toast.error('Failed to paste from clipboard. Make sure to allow clipboard access.');
+    }
+  };
 
   const languageTitle = {
     html: 'HTML',
@@ -58,6 +74,10 @@ export default function FullScreenEditor({
         <DialogHeader className="p-4 border-b border-border flex flex-row justify-between items-center sticky top-0 z-10">
           <DialogTitle className="text-lg font-medium">Editing {languageTitle[language]} Code</DialogTitle>
           <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={handlePaste}>
+              <ClipboardPaste className="h-4 w-4 mr-1" />
+              Paste
+            </Button>
             <Button variant="outline" size="sm" onClick={() => onOpenChange(false)}>
               <ArrowLeft className="h-4 w-4 mr-1" />
               Back

@@ -98,17 +98,34 @@ export default function CodeEditor({ language, value, onChange, fullscreen = fal
     }
   }, [value]);
 
+  // Handle external paste events (from paste button)
+  const handleExternalPaste = (pastedContent: string) => {
+    if (editorView) {
+      // Replace the entire content with the pasted content
+      editorView.dispatch({
+        changes: { from: 0, to: editorView.state.doc.length, insert: pastedContent }
+      });
+      onChange(pastedContent);
+    }
+  };
+
+  // Set up a global event listener for paste events
   useEffect(() => {
-    const handler = (event: CustomEvent) => {
-      if (typeof event.detail === "string" && event.detail.length) {
-        onChange(event.detail);
+    // Create a custom event listener for the editor
+    const pasteHandler = (event: CustomEvent) => {
+      if (event.detail && typeof event.detail === 'string') {
+        handleExternalPaste(event.detail);
       }
     };
-    window.addEventListener("editor-paste", handler as EventListener);
+
+    // Add the event listener to the window object
+    window.addEventListener('editor-paste', pasteHandler as EventListener);
+    
+    // Clean up the event listener when the component unmounts
     return () => {
-      window.removeEventListener("editor-paste", handler as EventListener);
+      window.removeEventListener('editor-paste', pasteHandler as EventListener);
     };
-  }, [onChange]);
+  }, [editorView]);
 
   return (
     <div className={`editor-container ${fullscreen ? "fullscreen-editor" : ""}`} ref={editorRef}></div>

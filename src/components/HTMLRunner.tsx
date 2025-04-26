@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -38,6 +37,16 @@ export default function HTMLRunner() {
   const handleSectionPaste = async (section: 'html' | 'css' | 'js') => {
     try {
       const text = await navigator.clipboard.readText();
+      if (!text) {
+        toast.error('Clipboard is empty or access denied');
+        return;
+      }
+      
+      // Dispatch a custom event to the editor
+      const customEvent = new CustomEvent('editor-paste', { detail: text });
+      window.dispatchEvent(customEvent);
+      
+      // Also update the state
       switch(section) {
         case 'html':
           setHtmlCode(text);
@@ -49,9 +58,11 @@ export default function HTMLRunner() {
           setJsCode(text);
           break;
       }
+      
       toast.success(`Pasted into ${section.toUpperCase()} editor`);
     } catch (err) {
-      toast.error('Failed to paste from clipboard');
+      console.error('Paste error:', err);
+      toast.error('Failed to paste from clipboard. Make sure to allow clipboard access.');
     }
   };
 
