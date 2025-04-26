@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -35,40 +36,68 @@ export default function HTMLRunner() {
 
   const handleSectionPaste = async (section: 'html' | 'css' | 'js') => {
     try {
-      if (navigator.clipboard && navigator.clipboard.readText) {
-        const text = await navigator.clipboard.readText();
-        if (!text) {
-          toast("Clipboard is empty or access denied", {
-            description: "Try tapping in the editor and using your device's paste function instead"
-          });
-          return;
-        }
-        
-        switch(section) {
-          case 'html':
-            setHtmlCode(text);
-            break;
-          case 'css':
-            setCssCode(text);
-            break;
-          case 'js':
-            setJsCode(text);
-            break;
-        }
-        
-        const customEvent = new CustomEvent('editor-paste', { detail: text });
-        window.dispatchEvent(customEvent);
-        
-        toast.success(`Pasted into ${section.toUpperCase()} editor`);
-      } else {
-        toast("Please use manual paste", {
-          description: "Tap in the editor and use your device's paste function"
-        });
+      const text = await navigator.clipboard.readText();
+      
+      if (!text) {
+        toast.error("No text found in clipboard");
+        return;
       }
+      
+      switch(section) {
+        case 'html':
+          setHtmlCode(text);
+          break;
+        case 'css':
+          setCssCode(text);
+          break;
+        case 'js':
+          setJsCode(text);
+          break;
+      }
+      
+      // Dispatch a custom event to notify editors about the paste
+      const customEvent = new CustomEvent('editor-paste', { detail: text });
+      window.dispatchEvent(customEvent);
+      
+      toast.success(`Pasted into ${section.toUpperCase()} editor`);
     } catch (err) {
       console.error('Paste error:', err);
-      toast("Unable to access clipboard automatically", {
-        description: "Please tap in the editor and use your device's paste function instead"
+      
+      // Try an alternative approach for mobile devices
+      if (navigator.clipboard && typeof navigator.clipboard.read === 'function') {
+        try {
+          const clipboardItems = await navigator.clipboard.read();
+          const clipboardItem = clipboardItems[0];
+          const textBlob = await clipboardItem.getType('text/plain');
+          const text = await textBlob.text();
+          
+          if (text) {
+            switch(section) {
+              case 'html':
+                setHtmlCode(text);
+                break;
+              case 'css':
+                setCssCode(text);
+                break;
+              case 'js':
+                setJsCode(text);
+                break;
+            }
+            
+            // Dispatch custom event
+            const customEvent = new CustomEvent('editor-paste', { detail: text });
+            window.dispatchEvent(customEvent);
+            
+            toast.success(`Pasted into ${section.toUpperCase()} editor`);
+            return;
+          }
+        } catch (clipboardReadErr) {
+          console.error('Clipboard read error:', clipboardReadErr);
+        }
+      }
+      
+      toast("To paste: tap in the editor and use your device's paste function", {
+        description: "Browser security restrictions may prevent direct clipboard access"
       });
     }
   };

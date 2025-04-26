@@ -48,28 +48,40 @@ export default function FullScreenEditor({
   
   const handlePaste = async () => {
     try {
-      // First try using the modern clipboard API
-      if (navigator.clipboard && navigator.clipboard.readText) {
-        const text = await navigator.clipboard.readText();
-        if (text) {
-          setEditedCode(text);
-          // Dispatch custom event to update editor
-          const customEvent = new CustomEvent('editor-paste', { detail: text });
-          window.dispatchEvent(customEvent);
-          toast.success('Code pasted from clipboard');
-          return;
+      const text = await navigator.clipboard.readText();
+      setEditedCode(text);
+      
+      // Dispatch a custom event to notify the editor about the paste operation
+      const customEvent = new CustomEvent('editor-paste', { detail: text });
+      window.dispatchEvent(customEvent);
+      
+      toast.success('Code pasted from clipboard');
+    } catch (err) {
+      console.error('Paste error:', err);
+      
+      // Try an alternative approach for mobile devices
+      if (navigator.clipboard && typeof navigator.clipboard.read === 'function') {
+        try {
+          const clipboardItems = await navigator.clipboard.read();
+          const clipboardItem = clipboardItems[0];
+          const textBlob = await clipboardItem.getType('text/plain');
+          const text = await textBlob.text();
+          
+          if (text) {
+            setEditedCode(text);
+            // Dispatch custom event
+            const customEvent = new CustomEvent('editor-paste', { detail: text });
+            window.dispatchEvent(customEvent);
+            toast.success('Code pasted from clipboard');
+            return;
+          }
+        } catch (clipboardReadErr) {
+          console.error('Clipboard read error:', clipboardReadErr);
         }
       }
       
-      // If the above doesn't work, provide fallback instructions
       toast("To paste: tap in the editor and use your device's paste function", {
         description: "Browser security restrictions may prevent direct clipboard access"
-      });
-    } catch (err) {
-      console.error('Paste error:', err);
-      // Show a more helpful error message with instructions
-      toast("Unable to access clipboard automatically", {
-        description: "Please tap in the editor and use your device's paste function instead",
       });
     }
   };

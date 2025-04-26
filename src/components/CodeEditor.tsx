@@ -55,7 +55,7 @@ export default function CodeEditor({ language, value, onChange, fullscreen = fal
               backgroundColor: "transparent"
             },
             ".cm-scroller": {
-              overflow: "auto !important",
+              overflow: "auto !important", 
               fontFamily: "monospace",
               padding: "0.75rem",
               scrollbarWidth: "thin",
@@ -103,36 +103,34 @@ export default function CodeEditor({ language, value, onChange, fullscreen = fal
   }, [value]);
 
   // Handle external paste events (from paste button)
-  const handleExternalPaste = (pastedContent: string) => {
-    if (editorView) {
-      // Replace the entire content with the pasted content
-      editorView.dispatch({
-        changes: { from: 0, to: editorView.state.doc.length, insert: pastedContent }
-      });
-      
-      // Make sure to call onChange to update parent component state
-      onChange(pastedContent);
-      
-      // Focus the editor after pasting to improve user experience
-      editorView.focus();
-    }
-  };
-
-  // Set up a global event listener for paste events
   useEffect(() => {
     // Create a custom event listener for the editor
-    const pasteHandler = (event: CustomEvent) => {
-      if (event.detail && typeof event.detail === 'string') {
-        handleExternalPaste(event.detail);
+    const pasteHandler = (event: Event) => {
+      const customEvent = event as CustomEvent;
+      if (customEvent.detail && typeof customEvent.detail === 'string') {
+        if (editorView) {
+          // Replace the entire content with the pasted content
+          editorView.dispatch({
+            changes: { from: 0, to: editorView.state.doc.length, insert: customEvent.detail }
+          });
+          
+          // Make sure to call onChange to update parent component state
+          onChange(customEvent.detail);
+          
+          // Focus the editor after pasting
+          setTimeout(() => {
+            editorView.focus();
+          }, 100);
+        }
       }
     };
 
     // Add the event listener to the window object
-    window.addEventListener('editor-paste', pasteHandler as EventListener);
+    window.addEventListener('editor-paste', pasteHandler);
     
     // Clean up the event listener when the component unmounts
     return () => {
-      window.removeEventListener('editor-paste', pasteHandler as EventListener);
+      window.removeEventListener('editor-paste', pasteHandler);
     };
   }, [editorView, onChange]);
 
