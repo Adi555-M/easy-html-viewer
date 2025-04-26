@@ -10,9 +10,10 @@ interface CodeEditorProps {
   language: 'html' | 'css' | 'javascript';
   value: string;
   onChange: (value: string) => void;
+  fullscreen?: boolean;
 }
 
-export default function CodeEditor({ language, value, onChange }: CodeEditorProps) {
+export default function CodeEditor({ language, value, onChange, fullscreen = false }: CodeEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
   const [editorView, setEditorView] = useState<EditorView | null>(null);
 
@@ -46,17 +47,18 @@ export default function CodeEditor({ language, value, onChange }: CodeEditorProp
           languageExtension,
           EditorView.theme({
             "&": {
-              height: "100%",
+              height: fullscreen ? "calc(100vh - 120px)" : "100%",
               maxHeight: "100%",
               fontSize: "14px",
               backgroundColor: "transparent"
             },
             ".cm-scroller": {
-              overflow: "auto",
+              overflow: "auto !important",
               fontFamily: "monospace",
-              padding: "0.5rem",
-              scrollbarWidth: "thin", // For Firefox
-              scrollbarColor: "rgba(155, 155, 155, 0.5) transparent" // For Firefox
+              padding: "0.75rem",
+              scrollbarWidth: "thin",
+              scrollbarColor: "rgba(155, 155, 155, 0.5) transparent",
+              height: "100%"
             },
             ".cm-content": {
               padding: "10px",
@@ -69,18 +71,6 @@ export default function CodeEditor({ language, value, onChange }: CodeEditorProp
             },
             "&.cm-focused": {
               outline: "none"
-            },
-            // Improved scrollbar styling for webkit browsers
-            "&::-webkit-scrollbar, .cm-scroller::-webkit-scrollbar": {
-              width: "8px",
-              height: "8px"
-            },
-            "&::-webkit-scrollbar-track, .cm-scroller::-webkit-scrollbar-track": {
-              background: "transparent"
-            },
-            "&::-webkit-scrollbar-thumb, .cm-scroller::-webkit-scrollbar-thumb": {
-              background: "rgba(155, 155, 155, 0.5)",
-              borderRadius: "4px"
             }
           }),
           EditorView.updateListener.of((update) => {
@@ -98,7 +88,7 @@ export default function CodeEditor({ language, value, onChange }: CodeEditorProp
     return () => {
       view.destroy();
     };
-  }, [language]);
+  }, [language, fullscreen]);
 
   useEffect(() => {
     if (editorView && value !== editorView.state.doc.toString()) {
@@ -121,6 +111,6 @@ export default function CodeEditor({ language, value, onChange }: CodeEditorProp
   }, [onChange]);
 
   return (
-    <div className="editor-container h-full" ref={editorRef}></div>
+    <div className={`editor-container ${fullscreen ? "fullscreen-editor" : ""}`} ref={editorRef}></div>
   );
 }

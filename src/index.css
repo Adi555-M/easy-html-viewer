@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -83,7 +84,7 @@
 
   .cm-scroller {
     overflow: auto !important;
-    padding: 0.5rem;
+    padding: 0.75rem;
     scrollbar-width: thin;
     scrollbar-color: rgba(155, 155, 155, 0.5) transparent;
   }
@@ -99,6 +100,11 @@
     height: 100%;
     position: relative;
     cursor: text;
+  }
+  
+  .fullscreen-editor {
+    min-height: 80vh;
+    height: 100%;
   }
   
   .cm-scroller::-webkit-scrollbar {

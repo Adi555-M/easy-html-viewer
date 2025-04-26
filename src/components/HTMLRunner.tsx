@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -6,6 +7,7 @@ import PreviewPanel from './PreviewPanel';
 import { Copy, Download, ClipboardPaste, Edit } from 'lucide-react';
 import { toast } from "sonner";
 import { Brain } from 'lucide-react';
+import FullScreenEditor from './FullScreenEditor';
 
 export default function HTMLRunner() {
   const [htmlCode, setHtmlCode] = useState('<h1>Hello World!</h1>\n<p>Start editing to see your changes</p>');
@@ -17,6 +19,10 @@ export default function HTMLRunner() {
   const [previewJs, setPreviewJs] = useState(jsCode);
 
   const [mode, setMode] = useState<'html-only' | 'full'>('html-only');
+  
+  // Full-screen editor state
+  const [fullscreenEditorOpen, setFullscreenEditorOpen] = useState(false);
+  const [currentEditSection, setCurrentEditSection] = useState<'html' | 'css' | 'js'>('html');
 
   const handleSectionCopy = async (section: 'html' | 'css' | 'js') => {
     const content = {
@@ -56,38 +62,61 @@ export default function HTMLRunner() {
       js: jsCode
     }[section];
     
+    const filename = {
+      html: 'code.html',
+      css: 'styles.css',
+      js: 'script.js'
+    }[section];
+    
     const blob = new Blob([content], { type: 'text/plain' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `code-${section}.txt`;
+    a.download = filename;
     document.body.appendChild(a);
     a.click();
     window.URL.revokeObjectURL(url);
     document.body.removeChild(a);
-    toast.success(`Downloaded ${section.toUpperCase()} code as TXT`);
+    toast.success(`Downloaded ${section.toUpperCase()} code as ${filename}`);
   };
 
-  const handleEdit = (section: 'html' | 'css' | 'js') => {
-    const content = {
-      html: htmlCode,
-      css: cssCode,
-      js: jsCode
-    }[section];
+  const handleFullscreenEdit = (section: 'html' | 'css' | 'js') => {
+    setCurrentEditSection(section);
+    setFullscreenEditorOpen(true);
+  };
 
-    const dispatchPasteEvent = (text: string) => {
-      const event = new CustomEvent('editor-paste', { detail: text });
-      window.dispatchEvent(event);
-    };
-
-    dispatchPasteEvent(content);
-    toast.success(`Code opened in editor`);
+  const handleSaveFullscreenEdit = (code: string) => {
+    switch(currentEditSection) {
+      case 'html':
+        setHtmlCode(code);
+        break;
+      case 'css':
+        setCssCode(code);
+        break;
+      case 'js':
+        setJsCode(code);
+        break;
+    }
   };
 
   const runCode = () => {
     setPreviewHtml(htmlCode);
     setPreviewCss(cssCode);
     setPreviewJs(jsCode);
+  };
+
+  // Get the correct code for the current edit section
+  const getCurrentEditCode = () => {
+    switch(currentEditSection) {
+      case 'html':
+        return htmlCode;
+      case 'css':
+        return cssCode;
+      case 'js':
+        return jsCode;
+      default:
+        return '';
+    }
   };
 
   return (
@@ -108,6 +137,7 @@ export default function HTMLRunner() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
           <div className="space-y-4 flex flex-col h-full">
+            {/* HTML Only Tab */}
             <TabsContent value="html-only" className="mt-0 animate-fade-in">
               <div className="space-y-2">
                 <div className="bg-secondary p-2 rounded-t-lg">
@@ -127,9 +157,9 @@ export default function HTMLRunner() {
                       <Download className="h-4 w-4 mr-1" />
                       Download
                     </Button>
-                    <Button variant="outline" size="sm" onClick={() => handleEdit('html')}>
+                    <Button variant="outline" size="sm" onClick={() => handleFullscreenEdit('html')}>
                       <Edit className="h-4 w-4 mr-1" />
-                      Edit
+                      Edit Full
                     </Button>
                   </div>
                 </div>
@@ -143,7 +173,9 @@ export default function HTMLRunner() {
               </div>
             </TabsContent>
 
+            {/* Full Tab */}
             <TabsContent value="full" className="mt-0 space-y-4 animate-fade-in">
+              {/* HTML Section */}
               <div className="space-y-2">
                 <div className="bg-secondary p-2 rounded-t-lg">
                   <h3 className="font-medium">HTML</h3>
@@ -162,9 +194,9 @@ export default function HTMLRunner() {
                       <Download className="h-4 w-4 mr-1" />
                       Download
                     </Button>
-                    <Button variant="outline" size="sm" onClick={() => handleEdit('html')}>
+                    <Button variant="outline" size="sm" onClick={() => handleFullscreenEdit('html')}>
                       <Edit className="h-4 w-4 mr-1" />
-                      Edit
+                      Edit Full
                     </Button>
                   </div>
                 </div>
@@ -173,6 +205,7 @@ export default function HTMLRunner() {
                 </div>
               </div>
 
+              {/* CSS Section */}
               <div className="space-y-2">
                 <div className="bg-secondary p-2 rounded-t-lg">
                   <h3 className="font-medium">CSS</h3>
@@ -191,9 +224,9 @@ export default function HTMLRunner() {
                       <Download className="h-4 w-4 mr-1" />
                       Download
                     </Button>
-                    <Button variant="outline" size="sm" onClick={() => handleEdit('css')}>
+                    <Button variant="outline" size="sm" onClick={() => handleFullscreenEdit('css')}>
                       <Edit className="h-4 w-4 mr-1" />
-                      Edit
+                      Edit Full
                     </Button>
                   </div>
                 </div>
@@ -202,6 +235,7 @@ export default function HTMLRunner() {
                 </div>
               </div>
 
+              {/* JavaScript Section */}
               <div className="space-y-2">
                 <div className="bg-secondary p-2 rounded-t-lg">
                   <h3 className="font-medium">JavaScript</h3>
@@ -220,9 +254,9 @@ export default function HTMLRunner() {
                       <Download className="h-4 w-4 mr-1" />
                       Download
                     </Button>
-                    <Button variant="outline" size="sm" onClick={() => handleEdit('js')}>
+                    <Button variant="outline" size="sm" onClick={() => handleFullscreenEdit('js')}>
                       <Edit className="h-4 w-4 mr-1" />
-                      Edit
+                      Edit Full
                     </Button>
                   </div>
                 </div>
@@ -249,6 +283,15 @@ export default function HTMLRunner() {
           </div>
         </div>
       </Tabs>
+
+      {/* Full-screen editor modal */}
+      <FullScreenEditor 
+        open={fullscreenEditorOpen}
+        onOpenChange={setFullscreenEditorOpen}
+        code={getCurrentEditCode()}
+        language={currentEditSection === 'js' ? 'javascript' : currentEditSection as 'html' | 'css' | 'javascript'}
+        onSave={handleSaveFullscreenEdit}
+      />
 
       <div className="mt-8 text-center">
         <div className="bg-soft-purple-100 rounded-lg py-3 px-4 inline-block mx-auto">
