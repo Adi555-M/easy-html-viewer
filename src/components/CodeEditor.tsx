@@ -17,6 +17,7 @@ export default function CodeEditor({ language, value, onChange, fullscreen = fal
   const editorRef = useRef<HTMLDivElement>(null);
   const [editorView, setEditorView] = useState<EditorView | null>(null);
 
+  // Create and configure editor on mount
   useEffect(() => {
     if (!editorRef.current) return;
 
@@ -39,6 +40,7 @@ export default function CodeEditor({ language, value, onChange, fullscreen = fal
         languageExtension = html();
     }
 
+    // Create editor view
     const view = new EditorView({
       state: EditorState.create({
         doc: value,
@@ -85,11 +87,13 @@ export default function CodeEditor({ language, value, onChange, fullscreen = fal
 
     setEditorView(view);
 
+    // Cleanup on unmount
     return () => {
       view.destroy();
     };
   }, [language, fullscreen]);
 
+  // Update editor when value prop changes
   useEffect(() => {
     if (editorView && value !== editorView.state.doc.toString()) {
       editorView.dispatch({
@@ -105,7 +109,12 @@ export default function CodeEditor({ language, value, onChange, fullscreen = fal
       editorView.dispatch({
         changes: { from: 0, to: editorView.state.doc.length, insert: pastedContent }
       });
+      
+      // Make sure to call onChange to update parent component state
       onChange(pastedContent);
+      
+      // Focus the editor after pasting to improve user experience
+      editorView.focus();
     }
   };
 
@@ -125,7 +134,7 @@ export default function CodeEditor({ language, value, onChange, fullscreen = fal
     return () => {
       window.removeEventListener('editor-paste', pasteHandler as EventListener);
     };
-  }, [editorView]);
+  }, [editorView, onChange]);
 
   return (
     <div className={`editor-container ${fullscreen ? "fullscreen-editor" : ""}`} ref={editorRef}></div>

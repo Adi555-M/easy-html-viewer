@@ -19,7 +19,6 @@ export default function HTMLRunner() {
 
   const [mode, setMode] = useState<'html-only' | 'full'>('html-only');
   
-  // Full-screen editor state
   const [fullscreenEditorOpen, setFullscreenEditorOpen] = useState(false);
   const [currentEditSection, setCurrentEditSection] = useState<'html' | 'css' | 'js'>('html');
 
@@ -36,33 +35,41 @@ export default function HTMLRunner() {
 
   const handleSectionPaste = async (section: 'html' | 'css' | 'js') => {
     try {
-      const text = await navigator.clipboard.readText();
-      if (!text) {
-        toast.error('Clipboard is empty or access denied');
-        return;
+      if (navigator.clipboard && navigator.clipboard.readText) {
+        const text = await navigator.clipboard.readText();
+        if (!text) {
+          toast("Clipboard is empty or access denied", {
+            description: "Try tapping in the editor and using your device's paste function instead"
+          });
+          return;
+        }
+        
+        switch(section) {
+          case 'html':
+            setHtmlCode(text);
+            break;
+          case 'css':
+            setCssCode(text);
+            break;
+          case 'js':
+            setJsCode(text);
+            break;
+        }
+        
+        const customEvent = new CustomEvent('editor-paste', { detail: text });
+        window.dispatchEvent(customEvent);
+        
+        toast.success(`Pasted into ${section.toUpperCase()} editor`);
+      } else {
+        toast("Please use manual paste", {
+          description: "Tap in the editor and use your device's paste function"
+        });
       }
-      
-      // Dispatch a custom event to the editor
-      const customEvent = new CustomEvent('editor-paste', { detail: text });
-      window.dispatchEvent(customEvent);
-      
-      // Also update the state
-      switch(section) {
-        case 'html':
-          setHtmlCode(text);
-          break;
-        case 'css':
-          setCssCode(text);
-          break;
-        case 'js':
-          setJsCode(text);
-          break;
-      }
-      
-      toast.success(`Pasted into ${section.toUpperCase()} editor`);
     } catch (err) {
       console.error('Paste error:', err);
-      toast.error('Failed to paste from clipboard. Make sure to allow clipboard access.');
+      toast("Unable to access clipboard automatically", {
+        description: "Please tap in the editor and use your device's paste function instead"
+      });
     }
   };
 
@@ -116,7 +123,6 @@ export default function HTMLRunner() {
     setPreviewJs(jsCode);
   };
 
-  // Get the correct code for the current edit section
   const getCurrentEditCode = () => {
     switch(currentEditSection) {
       case 'html':
@@ -148,7 +154,6 @@ export default function HTMLRunner() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
           <div className="space-y-4 flex flex-col h-full">
-            {/* HTML Only Tab */}
             <TabsContent value="html-only" className="mt-0 animate-fade-in">
               <div className="space-y-2">
                 <div className="bg-secondary p-2 rounded-t-lg">
@@ -184,9 +189,7 @@ export default function HTMLRunner() {
               </div>
             </TabsContent>
 
-            {/* Full Tab */}
             <TabsContent value="full" className="mt-0 space-y-4 animate-fade-in">
-              {/* HTML Section */}
               <div className="space-y-2">
                 <div className="bg-secondary p-2 rounded-t-lg">
                   <h3 className="font-medium">HTML</h3>
@@ -216,7 +219,6 @@ export default function HTMLRunner() {
                 </div>
               </div>
 
-              {/* CSS Section */}
               <div className="space-y-2">
                 <div className="bg-secondary p-2 rounded-t-lg">
                   <h3 className="font-medium">CSS</h3>
@@ -246,7 +248,6 @@ export default function HTMLRunner() {
                 </div>
               </div>
 
-              {/* JavaScript Section */}
               <div className="space-y-2">
                 <div className="bg-secondary p-2 rounded-t-lg">
                   <h3 className="font-medium">JavaScript</h3>
@@ -295,7 +296,6 @@ export default function HTMLRunner() {
         </div>
       </Tabs>
 
-      {/* Full-screen editor modal */}
       <FullScreenEditor 
         open={fullscreenEditorOpen}
         onOpenChange={setFullscreenEditorOpen}

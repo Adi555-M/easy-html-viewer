@@ -48,17 +48,29 @@ export default function FullScreenEditor({
   
   const handlePaste = async () => {
     try {
-      const text = await navigator.clipboard.readText();
-      if (text) {
-        setEditedCode(text);
-        const customEvent = new CustomEvent('editor-paste', { detail: text });
-        window.dispatchEvent(customEvent);
-        toast.success('Code pasted from clipboard');
-      } else {
-        toast.error('Clipboard is empty or access denied');
+      // First try using the modern clipboard API
+      if (navigator.clipboard && navigator.clipboard.readText) {
+        const text = await navigator.clipboard.readText();
+        if (text) {
+          setEditedCode(text);
+          // Dispatch custom event to update editor
+          const customEvent = new CustomEvent('editor-paste', { detail: text });
+          window.dispatchEvent(customEvent);
+          toast.success('Code pasted from clipboard');
+          return;
+        }
       }
+      
+      // If the above doesn't work, provide fallback instructions
+      toast("To paste: tap in the editor and use your device's paste function", {
+        description: "Browser security restrictions may prevent direct clipboard access"
+      });
     } catch (err) {
-      toast.error('Failed to paste from clipboard. Make sure to allow clipboard access.');
+      console.error('Paste error:', err);
+      // Show a more helpful error message with instructions
+      toast("Unable to access clipboard automatically", {
+        description: "Please tap in the editor and use your device's paste function instead",
+      });
     }
   };
 
