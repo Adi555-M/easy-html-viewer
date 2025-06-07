@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -8,6 +7,8 @@ import { Copy, Download, ClipboardPaste, Edit } from 'lucide-react';
 import { toast } from "sonner";
 import { Brain } from 'lucide-react';
 import FullScreenEditor from './FullScreenEditor';
+import MobileDesktopSwitch from './MobileDesktopSwitch';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export default function HTMLRunner() {
   const [htmlCode, setHtmlCode] = useState('<h1>Hello World!</h1>\n<p>Start editing to see your changes</p>');
@@ -22,6 +23,8 @@ export default function HTMLRunner() {
   
   const [fullscreenEditorOpen, setFullscreenEditorOpen] = useState(false);
   const [currentEditSection, setCurrentEditSection] = useState<'html' | 'css' | 'js'>('html');
+
+  const isMobile = useIsMobile();
 
   const handleSectionCopy = async (section: 'html' | 'css' | 'js') => {
     const content = {
@@ -175,9 +178,9 @@ export default function HTMLRunner() {
         onValueChange={(value) => setMode(value as 'html-only' | 'full')}
       >
         <div className="flex justify-center mb-4 md:mb-6">
-          <TabsList>
+          <TabsList className={isMobile ? "tabs-list-mobile" : ""}>
             <TabsTrigger value="html-only">HTML Only</TabsTrigger>
-            <TabsTrigger value="full">HTML + CSS + JavaScript</TabsTrigger>
+            <TabsTrigger value="full">HTML + CSS + JS</TabsTrigger>
           </TabsList>
         </div>
 
@@ -189,7 +192,7 @@ export default function HTMLRunner() {
                   <h3 className="font-medium">HTML</h3>
                 </div>
                 <div className="flex flex-col gap-2 items-start px-2 py-2 bg-muted border-b border-border">
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full">
+                  <div className={isMobile ? "mobile-button-grid" : "grid grid-cols-2 sm:grid-cols-4 gap-2 w-full"}>
                     <Button variant="outline" size="sm" onClick={() => handleSectionCopy('html')}>
                       <Copy className="h-4 w-4 mr-1" />
                       Copy
@@ -224,7 +227,7 @@ export default function HTMLRunner() {
                   <h3 className="font-medium">HTML</h3>
                 </div>
                 <div className="flex flex-col gap-2 items-start px-2 py-2 bg-muted border-b border-border">
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full">
+                  <div className={isMobile ? "mobile-button-grid" : "grid grid-cols-2 sm:grid-cols-4 gap-2 w-full"}>
                     <Button variant="outline" size="sm" onClick={() => handleSectionCopy('html')}>
                       <Copy className="h-4 w-4 mr-1" />
                       Copy
@@ -253,7 +256,7 @@ export default function HTMLRunner() {
                   <h3 className="font-medium">CSS</h3>
                 </div>
                 <div className="flex flex-col gap-2 items-start px-2 py-2 bg-muted border-b border-border">
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full">
+                  <div className={isMobile ? "mobile-button-grid" : "grid grid-cols-2 sm:grid-cols-4 gap-2 w-full"}>
                     <Button variant="outline" size="sm" onClick={() => handleSectionCopy('css')}>
                       <Copy className="h-4 w-4 mr-1" />
                       Copy
@@ -282,7 +285,7 @@ export default function HTMLRunner() {
                   <h3 className="font-medium">JavaScript</h3>
                 </div>
                 <div className="flex flex-col gap-2 items-start px-2 py-2 bg-muted border-b border-border">
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full">
+                  <div className={isMobile ? "mobile-button-grid" : "grid grid-cols-2 sm:grid-cols-4 gap-2 w-full"}>
                     <Button variant="outline" size="sm" onClick={() => handleSectionCopy('js')}>
                       <Copy className="h-4 w-4 mr-1" />
                       Copy
@@ -308,13 +311,17 @@ export default function HTMLRunner() {
             </TabsContent>
 
             <div className="flex justify-center sticky bottom-0 bg-background py-2 z-10">
-              <Button onClick={runCode} size="lg" className="w-full max-w-xs">
-                Run
+              <Button 
+                onClick={runCode} 
+                size="lg" 
+                className={isMobile ? "mobile-run-button" : "w-full max-w-xs"}
+              >
+                Run Code
               </Button>
             </div>
           </div>
 
-          <div className="min-h-[400px] h-full flex flex-col">
+          <div className={`min-h-[400px] h-full flex flex-col ${isMobile ? 'mobile-preview' : ''}`}>
             <PreviewPanel
               html={previewHtml}
               css={previewCss}
@@ -332,6 +339,8 @@ export default function HTMLRunner() {
         language={currentEditSection === 'js' ? 'javascript' : currentEditSection as 'html' | 'css' | 'javascript'}
         onSave={handleSaveFullscreenEdit}
       />
+
+      <MobileDesktopSwitch />
 
       <div className="mt-8 text-center">
         <div className="bg-soft-purple-100 rounded-lg py-3 px-4 inline-block mx-auto">
